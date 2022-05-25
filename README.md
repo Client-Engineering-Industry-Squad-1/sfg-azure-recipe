@@ -23,7 +23,7 @@
 
 1. This recipe is can be implemented using a combination of storage classes. Not all combination will work, the following table lists the storage classes that we have tested to work:
 
-    | Component | Access Mode | IBM Cloud | OCS/ODF |
+    | Component | Access Mode | Azure Cloud | OCS/ODF |
     | --- | --- | --- | --- |
     | SQL | RWX | azure-file | ocs-storagecluster-cephfs |
     | MQ | RWX | azure-file | ocs-storagecluster-cephfs |
