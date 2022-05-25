@@ -45,13 +45,13 @@
 
 2. Modify the B2BI pre-requisites components which includes the secrets and PVCs required for the B2BI helm chart.
 
-    1. Go to the `ibm-sfg-b2bi-prod-setup` directory:
+    1. Go to the directory:
 
         ```bash
-        cd multi-tenancy-gitops-services/instances/ibm-sfg-b2bi-prod-setup
+        cd multi-tenancy-gitops-services/instances/ibm-sfg-b2bi-setup
         ```
 
-    1. Generate a Sealed Secret for the credentials.
+    1. Generate the Sealed Secret for the credentials.
         ```bash
             B2B_DB_SECRET=dbadmin ./b2b-db-secret-secret.sh
         ```
