@@ -53,10 +53,10 @@
 
     1. Generate the Sealed Secret for the credentials.
         ```bash
-            B2B_DB_SECRET=dbadmin ./b2b-db-secret-secret.sh
+        B2B_DB_SECRET=dbadmin ./b2b-db-secret-secret.sh
         ```
         ```bash
-            JMS_PASSWORD=passw0rd JMS_KEYSTORE_PASSWORD=passw0rd JMS_TRUSTSTORE_PASSWORD=passw0rd ./b2b-jms-secret.sh
+        JMS_PASSWORD=passw0rd JMS_KEYSTORE_PASSWORD=passw0rd JMS_TRUSTSTORE_PASSWORD=passw0rd ./b2b-jms-secret.sh
         ```
         ```bash
         B2B_SYSTEM_PASSPHRASE_SECRET=password ./b2b-system-passphrase-secret.sh
