@@ -10,10 +10,13 @@
 
     ```yaml
     - argocd/consolenotification.yaml
-    - argocd/namespace-b2bi-prod.yaml
+    - argocd/namespace-db2.yaml
+    - argocd/namespace-mq.yaml
+    - argocd/namespace-tools.yaml
     - argocd/namespace-sealed-secrets.yaml
-    - argocd/serviceaccounts-b2bi-prod.yaml
-    - argocd/sfg-b2bi-clusterwide.yaml
+    - argocd/serviceaccounts-db2.yaml
+    - argocd/serviceaccounts-mq.yaml
+    - argocd/serviceaccounts-tools.yaml
     ```
 
 ### Services - Kustomization.yaml
@@ -50,69 +53,55 @@
 
     1. Generate a Sealed Secret for the credentials.
         ```bash
-        B2B_DB_SECRET=dbadmin \
-        JMS_PASSWORD=passw0rd JMS_KEYSTORE_PASSWORD=passw0rd JMS_TRUSTSTORE_PASSWORD=passw0rd \
-        B2B_SYSTEM_PASSPHRASE_SECRET=password \
-        ./sfg-b2bi-secrets.sh
+            B2B_DB_SECRET=dbadmin ./b2b-db-secret-secret.sh
         ```
-
-    1. Generate Persistent Volume Yamls required by Sterling File Gateway (the default is set in RWX_STORAGECLASS environment variable to `managed-nfs-storage` - if you are installing on ODF, set `RWX_STORAGECLASS=ocs-storagecluster-cephfs`)
-
         ```bash
-        ./sfg-b2bi-pvc-mods.sh
+            JMS_PASSWORD=passw0rd JMS_KEYSTORE_PASSWORD=passw0rd JMS_TRUSTSTORE_PASSWORD=passw0rd ./b2b-jms-secret.sh
+        ```
+        ```bash
+        B2B_SYSTEM_PASSPHRASE_SECRET=password ./b2b-system-passphrase-secret.sh
         ```
 
+    1. Generate Persistent Volume Yamls required by Sterling File Gateway (the default is set in RWX_STORAGECLASS environment variable to `managed-premium` - if you are installing on ODF, set `RWX_STORAGECLASS=ocs-storagecluster-cephfs`) if your using `azure-file`, set `RWX_STORAGECLASS=azure-file`
+
+        - add (re-visit)
     >  💡 **NOTE**  
     > Commit and Push the changes for `multi-tenancy-gitops-services` 
 
-1. Enable DB2, MQ and prerequisites in the main `multi-tenancy-gitops` repository
+1. Enable SQL, MQ and prerequisites in the main `multi-tenancy-gitops` repository
 
     1. Edit the Services layer `${GITOPS_PROFILE}/2-services/kustomization.yaml` by uncommenting the following lines to install the pre-requisites for Sterling File Gateway.
         ```yaml
-        - argocd/instances/ibm-sfg-db2-prod.yaml
-        - argocd/instances/ibm-sfg-mq-prod.yaml
-        - argocd/instances/ibm-sfg-b2bi-prod-setup.yaml
+        - argocd/instances/ibm-qm-instance.yaml
+        - argocd/instances/ibm-sfg-b2bi-setup.yaml
         ```
 
-    1. **Optional** Modify the DB2 and MQ storage classes to the environment that you use, the files are in `${GITOPS_PROFILE}/2-services/argocd/instances`. Edit `ibm-sfg-db2-prod.yaml` and `ibm-sfg-mq-prod.yaml` to switch the storageClassName if necessary.
+>  💡 **NOTE**  
+> Push the changes & sync ArgoCD. 
 
-
-    >  💡 **NOTE**  
-    > Commit and Push the changes for `multi-tenancy-gitops` and
-    > sync the ArgoCD application `services`.
-    >
-    > Make sure that the sterling toolkit pod does not throw any error.
-    > Wait for 5 minutes until the database is fully initialized. 
+1. Edit the Services layer `${GITOPS_PROFILE}/2-services/kustomization.yaml` by uncommenting the following line to install Sterling File Gateway, commit and push the changes and synchronize the `services` Application in the ArgoCD console:
    
-1. Generate Helm Chart values.yaml for the Sterling File Gateway Helm Chart in the `multi-tenancy-gitops-services` repo; note that the default storage class is using `managed-nfs-storage` - if you are installing on ODF, set `RWX_STORAGECLASS=ocs-storagecluster-cephfs`.
-
+1. Generate Helm Chart values.yaml for the Sterling File Gateway Helm Chart:
     ```
-    cd multi-tenancy-gitops-services/instances/ibm-sfg-b2bi-prod
+    cd multi-tenancy-gitops-services/instances/ibm-sfg-b2bi
     ./ibm-sfg-b2bi-overrides-values.sh
     ```
-
-    >  💡 **NOTE**  
-    > Commit and Push the changes for `multi-tenancy-gitops-services` 
-
-1. Edit the Services layer `${GITOPS_PROFILE}/2-services/kustomization.yaml` by uncommenting the following line to install Sterling File Gateway, **commit** and **push** the changes and refresh the `services` Application in the ArgoCD console:
+1. Edit the Services layer `${GITOPS_PROFILE}/2-services/kustomization.yaml` by uncommenting the following line to install Sterling File Gateway, **commit** and **push** the changes and synchronize the `services` Application in the ArgoCD console:
 
     ```yaml
-    - argocd/instances/ibm-sfg-b2bi-prod.yaml
+    - argocd/instances/ibm-sfg-b2bi.yaml
     ```
 
-    >  💡 **NOTE**  
-    > Commit and Push the changes for `multi-tenancy-gitops` and
-    > sync ArgoCD application `services` this will take around 1.5 hr for the database setup.
-
+>  💡 **NOTE**  
+> Push the changes & sync ArgoCD this will take around 1.5 hr.
 ---
-
 > **⚠️** Warning:  
 > If you decided to scale the pods or upgrade the verison you should do the following steps:
->> **This is to avoid going through the database setup job again**
+>> **This is to avoid going through the job again**
 
 - Step 1:
     ```bash
-    cd multi-tenancy-gitops-services/instances/ibm-sfg-b2bi-prod
+    cd multi-tenancy-gitops-services/instances/ibm-sfg-b2bi
     ```
 - Step 2:
   - Inside `values.yaml`, find & set 
@@ -121,20 +110,15 @@
         enable: false
     dbCreateSchema: false
     ```
-- Commit and push the changes for the `multi-tenancy-gitops-services` repo.
----
+- [USE-CASES](https://github.ibm.com/client-engineering-devops/general-admin/blob/master/tips/gitops/sterling/Scenarios.md)
+___
 
 ### Validation
 
 1.  Retrieve the Sterling File Gateway console URL.
 
     ```bash
-    oc get route -n tools ibm-sfg-b2bi-sfg-asi-internal-route-dashboard -o template --template='https://{{.spec.host}}'
+    oc get route -n tools ibm-sfg-b2bi-sfg-asi-internal-route-filegateway -o template --template='https://{{.spec.host}}'
     ```
 
 2. Log in with the default credentials:  username:`fg_sysadmin` password: `password` 
-
-
-### Additional instance of Sterling File Gateway
-
-The current setup has an additional set of customized instance of Sterling File Gateway B2BI in `b2bi-nonprod` namespace. Follow the similar proceure above to run the updates for the `b2bi-nonprod` namespace. 
