@@ -122,3 +122,15 @@ ___
     ```
 
 2. Log in with the default credentials:  username:`fg_sysadmin` password: `password` 
+
+- running sqlscripts:
+- For b2bi download create_scc_db_b2bidb.sql
+- create dockerfile
+- create script with the connection string 
+- create a k8's job to pull the image and run the script
+same for lightwell. 
+- lightwell sql script order
+    - MSSQL-PORTAL.sql
+    - MSSQL-FW.sql
+    - Portal-Seed.sql
+    - FW-Seed.sql
