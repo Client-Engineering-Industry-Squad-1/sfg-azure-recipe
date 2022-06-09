@@ -1,36 +1,36 @@
 - Once Lightwell Framework is installed:
-    - Edit the `admin` account and grant it with the "APIUser" permission to be able to log in to B2Bi Customization > Customization view.
-        Accounts > User Accounts and search for "admin".
-        Grant it the "APIUser" permission and save.
+    - Edit the `admin` account and grant it with the `APIUser` permission to be able to log in to B2Bi Customization > Customization view.
+        Accounts > User Accounts and search for `admin`.
+        Grant it the `APIUser` permission and save.
     - Log in to Customization > Customization view
-        - Click on CustomJar tab and click "Create CustomJar" button
+        - Click on CustomJar tab and click `Create CustomJar` button
             - Vendor Name: LW
             - Vendor Version: 1.0
             - Jar Type: Library
             - File: LWUtility.jar
             - Target Path: DCL
-            - Click on "Save CustomJar" button
-        - Click on CustomService tab and click "Create CustomService" button
+            - Click on `Save CustomJar` button
+        - Click on CustomService tab and click `Create CustomService` button
             - Service Name: LW-RuleService
             - File: LwRuleService.jar
-            - Click on "Save CustomService" button
-        - Click on CustomService tab and click "Create CustomService" button
+            - Click on `Save CustomService` button
+        - Click on CustomService tab and click `Create CustomService` button
             - Service Name: LW-UtilityService
             - File: LwUtilityService.jar
-            - Click on "Save CustomService" button
-        - Click on PropertyFile tab and click "Create PropertyFile" button
+            - Click on `Save CustomService` button
+        - Click on PropertyFile tab and click `Create PropertyFile` button
             - PropertyFile Prefix: customer_LW
             - Property File: customer_LW.properties
-            - Click on "Save PropertyFile" button
+            - Click on `Save PropertyFile` button
         - Update customer_overrides.properties for LW deployment (ie. set DB configurations)
-        - Click on PropertyFile tab and edit "customer_overrides" PropertyFile
-            - Click on "customer_overrides" and select "General" tab
-            - Click on "Edit" button
+        - Click on PropertyFile tab and edit `customer_overrides` PropertyFile
+            - Click on `customer_overrides` and select `General` tab
+            - Click on `Edit` button
             - Property File: customer_overrides.properties
-            - Click on "Replace Existing Property File" checkbox
-            - Click on "Save PropertyFile" button
-        - Edit "customer_LW" Property File
-            - Click on "customer_LW" Property File and select "Property" tab
+            - Click on `Replace Existing Property File` checkbox
+            - Click on `Save PropertyFile` button
+        - Edit `customer_LW` Property File
+            - Click on `customer_LW` Property File and select `Property` tab
             - Modify the following properties:
                 Property: DefaultEmail
                 Property Value: <Email>
@@ -52,12 +52,12 @@
                 Property Value: /files/archive
     - Log in to B2Bi Console
         - Deplooyment > Resource Manager > Import/Export
-        - Select "Import"
+        - Select `Import`
             File Name: EnvelopeExport.xml
             Passphrase: password
             Import All Resources: Select checkbox
             Click Next x3, Finish
-        - Select "Import"
+        - Select `Import`
             File Name: FrameworkExport.xml
             Passphrase: password
             Import All Resources: Select checkbox
@@ -108,4 +108,4 @@
         User ID: admin
         File: Partner1_850.edi
         Click Submit
-        Click "Show Documents"
+        Click `Show Documents`
