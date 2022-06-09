@@ -135,4 +135,4 @@ same for lightwell.
     - Portal-Seed.sql
     - FW-Seed.sql
 - sftp support blob storage azure [click here](https://docs.microsoft.com/en-us/azure/storage/blobs/secure-file-transfer-protocol-support)
-
+- TLS 1.2 network
