@@ -1,4 +1,4 @@
-Once Lightwell Framework is installed:
+- Once Lightwell Framework is installed:
     - Edit the `admin` account and grant it with the "APIUser" permission to be able to log in to B2Bi Customization > Customization view.
         Accounts > User Accounts and search for "admin".
         Grant it the "APIUser" permission and save.
@@ -85,9 +85,7 @@ Once Lightwell Framework is installed:
             - Edit LW_SA_LWJDBC_B2BI
                 Pool Name: db2Pool
             - Click Save
-
-
-Validation:
+- Validation:
     - Log in to Lightwell Portal and check Framework Version
     - Framework Management > Test Flow
         Protocol: PROXY
