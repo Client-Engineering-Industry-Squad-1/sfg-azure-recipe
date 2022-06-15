@@ -1,21 +1,5 @@
 # Deploy [Sterling File Gateway](https://developer.ibm.com/components/sterling/tutorials/)
 
-## IBM Entitlement Key
-
-The IBM Entitlement Key is required to pull IBM Cloud Pak specific container images from the IBM Entitled Registry. To get an entitlement key,
-
-- Log in to Access your [IBM entitlement key](https://myibm.ibm.com/products-services/containerlibrary) with an IBMid and password associated with the entitled software.
-- Select the View library option to verify your entitlement(s).
-- Select the Get entitlement key to retrieve the key.
-A Secret containing the entitlement key is created in the tools namespace.
-```bash
-oc new-project tools
-```
-```bash
-oc create secret docker-registry ibm-entitlement-key -n tools \
---docker-username=cp \
---docker-password=#<`enter-your-ibm-entitlement-key`> \
---docker-server=cp.icr.io
 ```
 ## Setting up environment variables for this tutorial
 ```bash
