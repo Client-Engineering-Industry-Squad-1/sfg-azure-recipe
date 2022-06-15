@@ -1,5 +1,53 @@
 # Deploy [Sterling File Gateway](https://developer.ibm.com/components/sterling/tutorials/)
 
+## IBM Entitlement Key
+
+The IBM Entitlement Key is required to pull IBM Cloud Pak specific container images from the IBM Entitled Registry. To get an entitlement key,
+
+- Log in to Access your [IBM entitlement key](https://myibm.ibm.com/products-services/containerlibrary) with an IBMid and password associated with the entitled software.
+- Select the View library option to verify your entitlement(s).
+- Select the Get entitlement key to retrieve the key.
+A Secret containing the entitlement key is created in the tools namespace.
+```bash
+oc new-project tools
+```
+```bash
+oc create secret docker-registry ibm-entitlement-key -n tools \
+--docker-username=cp \
+--docker-password=#<`enter-your-ibm-entitlement-key`> \
+--docker-server=cp.icr.io
+```
+## Setting up environment variables for this tutorial
+```bash
+export GIT_ORG=#enter name for GitHub organization
+```
+```bash
+echo $GIT_ORG #To validate that GIT_ORG has the correct value.
+```
+```bash
+oc login --token=#token --server=#server
+```
+
+### Clone your GitOps repositories from your Github Organization 
+```bash
+cd ~
+mkdir $GIT_ORG
+cd $GIT_ORG
+git clone https://github.com/$GIT_ORG/multi-tenancy-gitops.git
+git clone https://github.com/$GIT_ORG/multi-tenancy-gitops-infra.git
+git clone https://github.com/$GIT_ORG/multi-tenancy-gitops-services.git
+git clone https://github.com/$GIT_ORG/multi-tenancy-gitops-apps.git
+ls -l
+```
+#### Launch and login to ArgoCD
+the Following command will provide ArgoCD URL
+```bash
+#ARGOCD username: admin
+#ARGOCD URL:
+oc get route -n openshift-gitops | grep openshift-gitops-cntk-server | awk '{print "https://"$2}'
+#ARGOCD_PASSWORD: 
+oc get secret/openshift-gitops-cntk-cluster -n openshift-gitops -o json | jq -r '.data."admin.password"' | base64 -D
+```
 
 ### Infrastructure - Kustomization.yaml
 1. Edit the Infrastructure layer `${GITOPS_PROFILE}/1-infra/kustomization.yaml`, un-comment the following lines, commit and push the changes and synchronize the `infra` Application in the ArgoCD console.
@@ -10,12 +58,8 @@
 
     ```yaml
     - argocd/consolenotification.yaml
-    - argocd/namespace-db2.yaml
-    - argocd/namespace-mq.yaml
     - argocd/namespace-tools.yaml
     - argocd/namespace-sealed-secrets.yaml
-    - argocd/serviceaccounts-db2.yaml
-    - argocd/serviceaccounts-mq.yaml
     - argocd/serviceaccounts-tools.yaml
     ```
 
@@ -23,15 +67,16 @@
 
 1. This recipe is can be implemented using a combination of storage classes. Not all combination will work, the following table lists the storage classes that we have tested to work:
 
-    | Component | Access Mode | Azure Cloud | OCS/ODF |
+    | Component | Access Mode | [Azure NetApp](https://mobb.ninja/docs/aro/trident/) | OCS/ODF |
     | --- | --- | --- | --- |
-    | SQL | RWX | azure-file | ocs-storagecluster-cephfs |
-    | MQ | RWX | azure-file | ocs-storagecluster-cephfs |
-    | SFG | RWX | azure-file | ocs-storagecluster-cephfs |
+    | SQL | RWX | standard | ocs-storagecluster-cephfs |
+    | MQ | RWX | standard | ocs-storagecluster-cephfs |
+    | SFG | RWX | standard | ocs-storagecluster-cephfs |
 
 1. Edit the Services layer `${GITOPS_PROFILE}/2-services/kustomization.yaml` and install Sealed Secrets by uncommenting the following line, **commit** and **push** the changes and refresh the `services` Application in the ArgoCD console.
     ```yaml
     - argocd/instances/sealed-secrets.yaml
+    - argocd/operators/ibm-mq-operator.yaml
     ```
 
     >  💡 **NOTE**  
@@ -42,7 +87,6 @@
     ```bash
     git clone git@github.com:${GIT_ORG}/multi-tenancy-gitops-services.git
     ```
-
 2. Modify the B2BI pre-requisites components which includes the secrets and PVCs required for the B2BI helm chart.
 
     1. Go to the directory:
@@ -50,7 +94,6 @@
         ```bash
         cd multi-tenancy-gitops-services/instances/ibm-sfg-b2bi-setup
         ```
-
     1. Generate the Sealed Secret for the credentials.
         ```bash
         B2B_DB_SECRET=dbadmin ./b2b-db-secret-secret.sh
@@ -72,17 +115,17 @@
 
     1. Edit the Services layer `${GITOPS_PROFILE}/2-services/kustomization.yaml` by uncommenting the following lines to install the pre-requisites for Sterling File Gateway.
         ```yaml
-        - argocd/instances/ibm-qm-instance.yaml
+        - argocd/instances/ibm-queuemanager-instance.yaml
         - argocd/instances/ibm-sfg-b2bi-setup.yaml
         ```
 
->  💡 **NOTE**  
-> Push the changes & sync ArgoCD. 
+        >  💡 **NOTE**  
+        > Push the changes & sync ArgoCD. 
 
 1. Edit the Services layer `${GITOPS_PROFILE}/2-services/kustomization.yaml` by uncommenting the following line to install Sterling File Gateway, commit and push the changes and synchronize the `services` Application in the ArgoCD console:
    
 1. Generate Helm Chart values.yaml for the Sterling File Gateway Helm Chart:
-    ```
+    ```bash
     cd multi-tenancy-gitops-services/instances/ibm-sfg-b2bi
     ./ibm-sfg-b2bi-overrides-values.sh
     ```
@@ -92,8 +135,17 @@
     - argocd/instances/ibm-sfg-b2bi.yaml
     ```
 
->  💡 **NOTE**  
-> Push the changes & sync ArgoCD this will take around 1.5 hr.
+    >  💡 **NOTE**  
+    > Push the changes & sync ArgoCD this will take around 1.5 hr.
+
+1. Edit the Services layer `${GITOPS_PROFILE}/2-services/kustomization.yaml` by uncommenting the following line to install Lightwell, **commit** and **push** the changes and synchronize the `services` Application in the ArgoCD console:
+
+    ```yaml
+    - argocd/instances/lightwell-framework.yaml
+    ```
+### [Installation](./Post-install-lw.md) of Lightwell
+    >  💡 **NOTE**  
+    > Push the changes & sync ArgoCD.
 ---
 > **⚠️** Warning:  
 > If you decided to scale the pods or upgrade the verison you should do the following steps:
@@ -112,7 +164,6 @@
     ```
 - [USE-CASES](https://github.ibm.com/client-engineering-devops/general-admin/blob/master/tips/gitops/sterling/Scenarios.md)
 ___
-
 ### Validation
 
 1.  Retrieve the Sterling File Gateway console URL.
@@ -123,7 +174,7 @@ ___
 
 2. Log in with the default credentials:  username:`fg_sysadmin` password: `password` 
 
-- running sqlscripts:
+<!-- - running sqlscripts:
 - For b2bi download create_scc_db_b2bidb.sql
 - create dockerfile
 - create script with the connection string 
@@ -135,4 +186,4 @@ same for lightwell.
     - Portal-Seed.sql
     - FW-Seed.sql
 - sftp support blob storage azure [click here](https://docs.microsoft.com/en-us/azure/storage/blobs/secure-file-transfer-protocol-support)
-- TLS 1.2 network
+- TLS 1.2 network -->
