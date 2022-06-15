@@ -121,6 +121,9 @@ oc get secret/openshift-gitops-cntk-cluster -n openshift-gitops -o json | jq -r 
 
     >  💡 **NOTE**  
     > Push the changes & sync ArgoCD this will take around 1.5 hr.
+1. Deploying `SFTP` service support blob storage azure [click here](https://docs.microsoft.com/en-us/azure/storage/blobs/secure-file-transfer-protocol-support) for business processes.
+
+    > Steps on b2bi side needs to be filled up with David ash.
 
 1. Edit the Services layer `${GITOPS_PROFILE}/2-services/kustomization.yaml` by uncommenting the following line to install Lightwell, **commit** and **push** the changes and synchronize the `services` Application in the ArgoCD console:
 
