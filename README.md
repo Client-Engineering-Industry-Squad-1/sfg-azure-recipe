@@ -196,7 +196,7 @@ oc get secret/openshift-gitops-cntk-cluster -n openshift-gitops -o json | jq -r 
         enable: false
     dbCreateSchema: false
     ```
-- [USE-CASES](https://github.ibm.com/client-engineering-devops/general-admin/blob/master/tips/gitops/sterling/Scenarios.md)
+- [USE-CASES](./Scenarios.md)
 ___
 ### Validation
 
