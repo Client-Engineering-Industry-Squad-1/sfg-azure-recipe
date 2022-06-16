@@ -1,6 +1,6 @@
 # Deploy [Sterling File Gateway](https://developer.ibm.com/components/sterling/tutorials/)
 
-```
+
 ## Setting up environment variables for this tutorial
 ```bash
 export GIT_ORG=#enter name for GitHub organization
