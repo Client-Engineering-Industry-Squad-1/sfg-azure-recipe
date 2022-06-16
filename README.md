@@ -106,12 +106,17 @@ oc get secret/openshift-gitops-cntk-cluster -n openshift-gitops -o json | jq -r 
 
 1. Edit the Services layer `${GITOPS_PROFILE}/2-services/kustomization.yaml` and install Sealed Secrets by uncommenting the following line, **commit** and **push** the changes and refresh the `services` Application in the ArgoCD console.
     ```yaml
+    - argocd/operators/ibm-foundations.yaml
     - argocd/instances/sealed-secrets.yaml
     - argocd/operators/ibm-mq-operator.yaml
     ```
-
     >  💡 **NOTE**  
     > Commit and Push the changes for `multi-tenancy-gitops` & sync ArgoCD. 
+   ```yaml
+    - argocd/instances/ibm-foundational-services-instance.yaml
+   ```
+    >  💡 **NOTE**  
+    > Commit and Push the changes for `multi-tenancy-gitops` & sync ArgoCD.
 
 1. Clone the services repo for GitOps, open a terminal window and clone the `multi-tenancy-gitops-services` repository under your Git Organization.
         
