@@ -178,8 +178,8 @@ oc get secret/openshift-gitops-cntk-cluster -n openshift-gitops -o json | jq -r 
     - argocd/instances/lightwell-framework.yaml
     ```
 ### [Installation](./Post-install-lw.md) of Lightwell
-    >  💡 **NOTE**  
-    > Push the changes & sync ArgoCD.
+>  💡 **NOTE**  
+> Push the changes & sync ArgoCD.
 ---
 > **⚠️** Warning:  
 > If you decided to scale the pods or upgrade the verison you should do the following steps:
