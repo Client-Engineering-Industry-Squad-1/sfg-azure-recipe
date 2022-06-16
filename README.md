@@ -40,6 +40,36 @@ git clone https://github.com/$GIT_ORG/multi-tenancy-gitops-services.git
 git clone https://github.com/$GIT_ORG/multi-tenancy-gitops-apps.git
 ls -l
 ```
+### Installing ArgoCD for GitOps
+Now that we've had an initial view of the GitOps repository, let's install ArgoCD to make use of it.
+We will install ArgoCD using the Red Hat OpenShift GitOps operator.
+For more information about Argo installation 
+[argocd](https://production-gitops.dev/guides/cp4i/mq/cluster-config/gitops-tekton-argocd/#installing-argocd-for-gitops)
+
+Screenshot of no operator
+
+#### Install the `Red Hat OpenShift GitOps` operator
+```bash
+cd multi-tenancy-gitops
+oc apply -f setup/ocp47
+```
+
+The response confirms that the below resources has been created:
+```bash
+clusterrole.rbac.authorization.k8s.io/custom-argocd-cluster-argocd-application-controller created
+clusterrolebinding.rbac.authorization.k8s.io/openshift-gitops-argocd-application-controller created
+clusterrolebinding.rbac.authorization.k8s.io/openshift-gitops-cntk-argocd-application-controller created
+subscription.operators.coreos.com/openshift-gitops-operator created
+```
+
+Screenshot of operator
+
+#### Apply customized ArgoCD instance
+Instead of using the default ArgoCD from the `Red Hat OpenShift GitOps` operator we want to manage if via GitOps. We will delete it so we can apply our customized ArgoCD.
+```
+oc delete gitopsservice cluster -n openshift-gitops || true
+oc apply -f setup/ocp47/argocd-instance/ -n openshift-gitops
+```
 #### Launch and login to ArgoCD
 the Following command will provide ArgoCD URL
 ```bash
