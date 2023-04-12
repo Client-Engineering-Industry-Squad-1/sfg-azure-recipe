@@ -106,6 +106,7 @@ oc get secret/openshift-gitops-cntk-cluster -n openshift-gitops -o json | jq -r 
 
 1. Edit the Services layer `${GITOPS_PROFILE}/2-services/kustomization.yaml` and install Sealed Secrets by uncommenting the following line, **commit** and **push** the changes and refresh the `services` Application in the ArgoCD console.
     ```yaml
+    - argocd/operators/ibm-catalogs.yaml
     - argocd/operators/ibm-foundations.yaml
     - argocd/instances/sealed-secrets.yaml
     - argocd/operators/ibm-mq-operator.yaml
